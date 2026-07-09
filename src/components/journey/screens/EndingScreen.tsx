@@ -1,116 +1,96 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { RotateCcw } from "lucide-react";
 import { burstCannons } from "@/lib/confetti";
+import { NAME } from "@/lib/journeyConfig";
 
-const ReactConfetti = dynamic(() => import("react-confetti"), { ssr: false });
-
-const LANTERNS = [
-  { left: "8%", delay: "0s", duration: "14s" },
-  { left: "22%", delay: "2s", duration: "16s" },
-  { left: "40%", delay: "4s", duration: "13s" },
-  { left: "58%", delay: "1s", duration: "17s" },
-  { left: "74%", delay: "3.5s", duration: "15s" },
-  { left: "88%", delay: "5s", duration: "14.5s" },
+const BLOOMS = [
+  { top: "6%", left: "8%", emoji: "🌸", size: 30, delay: 0 },
+  { top: "14%", left: "88%", emoji: "🌷", size: 26, delay: 0.2 },
+  { top: "80%", left: "6%", emoji: "🌼", size: 28, delay: 0.4 },
+  { top: "86%", left: "90%", emoji: "🌺", size: 26, delay: 0.6 },
+  { top: "4%", left: "46%", emoji: "🌷", size: 22, delay: 0.8 },
+  { top: "90%", left: "44%", emoji: "🌸", size: 24, delay: 1 },
+  { top: "40%", left: "4%", emoji: "🌼", size: 22, delay: 1.2 },
+  { top: "46%", left: "94%", emoji: "🌺", size: 24, delay: 1.4 },
 ];
 
 type EndingScreenProps = {
-  nickname: string;
   onRestart: () => void;
 };
 
-export default function EndingScreen({ nickname, onRestart }: EndingScreenProps) {
-  const [dimensions, setDimensions] = useState(() =>
-    typeof window === "undefined"
-      ? { width: 0, height: 0 }
-      : { width: window.innerWidth, height: window.innerHeight }
-  );
-
+export default function EndingScreen({ onRestart }: EndingScreenProps) {
   useEffect(() => {
-    function handleResize() {
-      setDimensions({ width: window.innerWidth, height: window.innerHeight });
-    }
-    window.addEventListener("resize", handleResize);
-
     burstCannons();
-    const t = setInterval(burstCannons, 3000);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      clearInterval(t);
-    };
+    const t = setInterval(burstCannons, 5000);
+    return () => clearInterval(t);
   }, []);
 
   return (
     <section className="relative z-10 flex min-h-screen w-full flex-col items-center justify-center px-4 py-16 text-center sm:px-6">
-      {dimensions.width > 0 && (
-        <ReactConfetti
-          width={dimensions.width}
-          height={dimensions.height}
-          numberOfPieces={70}
-          recycle
-          gravity={0.08}
-          className="pointer-events-none fixed inset-0 z-20"
-        />
-      )}
-
       <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-        {LANTERNS.map((l, i) => (
-          <div
+        {BLOOMS.map((b, i) => (
+          <span
             key={i}
-            className="balloon"
+            className="flower-bloom absolute"
             style={{
-              left: l.left,
-              width: 34,
-              height: 44,
-              borderRadius: "6px",
-              background: "radial-gradient(circle at 40% 30%, #FFE9A8, #FF9E5E)",
-              boxShadow: "0 0 18px 6px rgba(255,180,90,0.5)",
-              animationDelay: l.delay,
-              animationDuration: l.duration,
+              top: b.top,
+              left: b.left,
+              fontSize: b.size,
+              animationDelay: `${b.delay}s`,
             }}
-          />
+          >
+            {b.emoji}
+          </span>
         ))}
       </div>
 
       <motion.p
-        className="text-glow font-quote mb-4 max-w-md text-lg italic text-white sm:text-xl"
-        initial={{ opacity: 0, y: 20 }}
+        className="text-glow relative z-10 text-4xl text-white sm:text-5xl"
+        initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        Thank you for taking this journey.
+        🌙
+      </motion.p>
+
+      <motion.p
+        className="text-glow font-quote relative z-10 mt-4 max-w-md text-lg italic text-white sm:text-xl"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.3 }}
+      >
+        No matter where life takes us...
+      </motion.p>
+
+      <motion.p
+        className="text-glow font-quote relative z-10 mt-2 max-w-md text-lg italic text-white sm:text-xl"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.6 }}
+      >
+        I&apos;ll always wish the very best for you.
       </motion.p>
 
       <motion.h1
-        className="text-glow gold-glow font-script text-5xl text-white sm:text-7xl"
+        className="text-glow gold-glow font-script relative z-10 mt-6 text-5xl text-white sm:text-7xl"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, delay: 0.3, type: "spring" }}
+        transition={{ duration: 0.8, delay: 1, type: "spring" }}
       >
-        Happy Birthday, {nickname} ❤️
+        Happy Birthday Once Again, {NAME} ❤️
       </motion.h1>
-
-      <motion.p
-        className="mt-8 text-sm text-white/70 sm:text-base"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.8 }}
-      >
-        Made with lots of love.
-      </motion.p>
 
       <motion.button
         onClick={onRestart}
-        className="mt-10 flex items-center gap-2 rounded-full border border-white/40 px-5 py-2 text-sm text-white/80 backdrop-blur transition hover:bg-white/10"
+        className="relative z-10 mt-10 flex items-center gap-2 rounded-full border border-[#E9C46A]/50 px-5 py-2 text-sm text-white/80 backdrop-blur transition hover:bg-white/10"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 1.2 }}
       >
-        <RotateCcw size={14} /> Replay the journey
+        <RotateCcw size={14} /> Replay Journey
       </motion.button>
     </section>
   );

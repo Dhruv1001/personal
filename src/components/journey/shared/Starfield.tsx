@@ -26,11 +26,6 @@ const SHOOTING_STARS = [
 export default function Starfield() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-      <div
-        className="moon-glow absolute right-[8%] top-[6%] h-16 w-16 sm:h-24 sm:w-24"
-        style={{ animationDelay: "0s" }}
-      />
-
       {STARS.map((s, i) => (
         <div
           key={i}

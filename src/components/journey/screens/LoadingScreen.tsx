@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import GardenButton from "../shared/GardenButton";
+import { NAME } from "@/lib/journeyConfig";
 
 type LoadingScreenProps = {
-  nickname: string;
   onContinue: () => void;
 };
 
-export default function LoadingScreen({ nickname, onContinue }: LoadingScreenProps) {
+export default function LoadingScreen({ onContinue }: LoadingScreenProps) {
   const [phase, setPhase] = useState(0);
 
   useEffect(() => {
@@ -45,7 +46,7 @@ export default function LoadingScreen({ nickname, onContinue }: LoadingScreenPro
               exit={{ opacity: 0 }}
               transition={{ duration: 1 }}
             >
-              This one is for {nickname} ❤️
+              This one is for {NAME} ❤️
             </motion.p>
           )}
         </AnimatePresence>
@@ -53,18 +54,15 @@ export default function LoadingScreen({ nickname, onContinue }: LoadingScreenPro
 
       <AnimatePresence>
         {phase === 2 && (
-          <motion.button
-            onClick={onContinue}
-            className="ripple mt-12 rounded-full bg-white/90 px-8 py-3 text-lg font-semibold text-[#7c3f8f] shadow-lg transition hover:scale-105 active:scale-95"
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6 }}
-            whileHover={{ scale: 1.06 }}
-            whileTap={{ scale: 0.94 }}
+            className="mt-12"
           >
-            Begin the Journey ✨
-          </motion.button>
+            <GardenButton onClick={onContinue}>Begin the Journey</GardenButton>
+          </motion.div>
         )}
       </AnimatePresence>
     </section>
