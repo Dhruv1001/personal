@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Mic } from "lucide-react";
 import ScreenShell from "../shared/ScreenShell";
+import GardenButton from "../shared/GardenButton";
 import { burstUp, burstCannons } from "@/lib/confetti";
+import { feedback } from "@/lib/sound";
 
 type CakeScreenProps = {
   onContinue: () => void;
@@ -13,11 +15,11 @@ type CakeScreenProps = {
 const CANDLE_COUNT = 5;
 
 const SPRINKLES = [
-  { left: "18%", top: "-6px", color: "#FF69B4", rotate: "20deg" },
-  { left: "32%", top: "-2px", color: "#F3E8FF", rotate: "-15deg" },
-  { left: "48%", top: "-8px", color: "#FFC6D9", rotate: "35deg" },
-  { left: "63%", top: "-3px", color: "#FFD86B", rotate: "-25deg" },
-  { left: "77%", top: "-7px", color: "#FF69B4", rotate: "10deg" },
+  { left: "18%", top: "-6px", color: "#CDB4DB", rotate: "20deg" },
+  { left: "32%", top: "-2px", color: "#FFF8F0", rotate: "-15deg" },
+  { left: "48%", top: "-8px", color: "#F8D7E6", rotate: "35deg" },
+  { left: "63%", top: "-3px", color: "#E9C46A", rotate: "-25deg" },
+  { left: "77%", top: "-7px", color: "#A8C686", rotate: "10deg" },
 ];
 
 export default function CakeScreen({ onContinue }: CakeScreenProps) {
@@ -29,6 +31,7 @@ export default function CakeScreen({ onContinue }: CakeScreenProps) {
 
   function blowAll() {
     if (allOut) return;
+    feedback(15);
     lit.forEach((_, i) => {
       setTimeout(() => {
         setLit((prev) => {
@@ -89,10 +92,17 @@ export default function CakeScreen({ onContinue }: CakeScreenProps) {
   return (
     <ScreenShell onContinue={allOut ? onContinue : undefined} continueLabel="Continue →">
       <h2 className="text-glow mb-6 text-2xl font-bold text-white sm:text-4xl">
-        Make a wish 🌟
+        🌸 Make a birthday wish 🌸
       </h2>
 
-      <div className="glass-card flex flex-col items-center px-5 py-8 sm:px-10 sm:py-10 md:px-12 md:py-12">
+      <div className="glass-card relative flex flex-col items-center px-5 py-8 sm:px-10 sm:py-10 md:px-12 md:py-12">
+        <span aria-hidden className="absolute -left-3 bottom-6 text-2xl sm:text-3xl">
+          🌷
+        </span>
+        <span aria-hidden className="absolute -right-3 bottom-8 text-2xl sm:text-3xl">
+          🌼
+        </span>
+
         <div className="flex items-end justify-center gap-1.5 sm:gap-2 md:gap-3">
           {lit.map((isLit, i) => (
             <div key={i} className="flex flex-col items-center">
@@ -111,8 +121,8 @@ export default function CakeScreen({ onContinue }: CakeScreenProps) {
 
         <div className="-mt-1 flex flex-col items-center">
           <div
-            className="frosting relative h-5 w-36 rounded-t-3xl bg-gradient-to-b from-[#F3E8FF] to-[#FFC6D9] sm:h-6 sm:w-48 md:h-8 md:w-64"
-            style={{ color: "#FFC6D9" }}
+            className="frosting relative h-5 w-36 rounded-t-3xl bg-gradient-to-b from-[#FFF8F0] to-[#F8D7E6] sm:h-6 sm:w-48 md:h-8 md:w-64"
+            style={{ color: "#F8D7E6" }}
           >
             {SPRINKLES.map((s, i) => (
               <span
@@ -123,25 +133,18 @@ export default function CakeScreen({ onContinue }: CakeScreenProps) {
             ))}
           </div>
           <div
-            className="frosting h-6 w-44 rounded-t-2xl bg-gradient-to-b from-[#FFC6D9] to-[#FF69B4] sm:h-8 sm:w-56 md:h-10 md:w-72"
-            style={{ color: "#FF69B4" }}
+            className="frosting h-6 w-44 rounded-t-2xl bg-gradient-to-b from-[#F8D7E6] to-[#CDB4DB] sm:h-8 sm:w-56 md:h-10 md:w-72"
+            style={{ color: "#CDB4DB" }}
           />
           <div
-            className="frosting h-8 w-52 rounded-t-2xl bg-gradient-to-b from-[#FF69B4] to-[#7c3f8f] sm:h-10 sm:w-64 md:h-12 md:w-80"
-            style={{ color: "#7c3f8f" }}
+            className="frosting h-8 w-52 rounded-t-2xl bg-gradient-to-b from-[#CDB4DB] to-[#6b7a4a] sm:h-10 sm:w-64 md:h-12 md:w-80"
+            style={{ color: "#6b7a4a" }}
           />
         </div>
 
         {!allOut ? (
           <div className="mt-8 flex flex-col items-center gap-3 sm:mt-10">
-            <motion.button
-              onClick={blowAll}
-              className="ripple rounded-full bg-white px-6 py-2.5 text-base font-semibold text-[#7c3f8f] shadow-lg transition hover:scale-105 hover:shadow-xl active:scale-95 sm:px-8 sm:py-3 sm:text-lg"
-              whileHover={{ scale: 1.06 }}
-              whileTap={{ scale: 0.94 }}
-            >
-              Blow out the candles 💨
-            </motion.button>
+            <GardenButton onClick={blowAll}>Blow out the candles</GardenButton>
             <button
               onClick={tryMicBlow}
               className="flex items-center gap-1.5 text-xs text-white/70 underline-offset-2 hover:underline"
@@ -164,7 +167,7 @@ export default function CakeScreen({ onContinue }: CakeScreenProps) {
       {allOut && (
         <button
           onClick={relight}
-          className="mt-4 rounded-full border border-white/40 px-4 py-1.5 text-sm text-white/80 transition hover:bg-white/10"
+          className="mt-4 rounded-full border border-[#E9C46A]/50 px-4 py-1.5 text-sm text-white/80 transition hover:bg-white/10"
         >
           Relight candles
         </button>
